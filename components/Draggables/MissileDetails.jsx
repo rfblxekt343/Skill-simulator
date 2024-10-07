@@ -16,10 +16,10 @@ const MissileDetails = () => {
   };
 
   return (
-    <DraggableScreen id="2" initialPosition={{ x: 30, y: 30 }}>
+    <DraggableScreen id="2" initialPosition={{ x: 20, y: 50 }}>
       <div className="bg-white p-3 rounded-lg shadow-md max-w-xs w-full border border-gray-200">
         <h2 className="text-lg font-bold mb-2 text-center text-blue-600 border-b border-blue-200 pb-1">
-          פרטי הטיל
+          פרטים על הטיל שנבחר
         </h2>
         {chosenMissile ? (
           <div className="space-y-1 text-sm">
@@ -38,7 +38,7 @@ const MissileDetails = () => {
           </div>
         ) : (
           <p className="text-gray-600 text-center text-sm">
-            בחר טיל במפה לפרטים
+            על מנת לראות פרטים על טיל, יש ללחוץ על אחד מן הטילים במפה
           </p>
         )}
       </div>

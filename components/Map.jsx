@@ -7,6 +7,8 @@ import "leaflet-ant-path";
 import { useDispatch, useSelector } from 'react-redux';
 import { setChosenMissile } from '../store/chosenMissileSlice';
 import { addInterceptedMissile } from '../store/interceptionSlice';
+import {decrementActualStock} from '../store/missileStockSlice';
+
 
 // Fix Leaflet's default icon path issues
 delete L.Icon.Default.prototype._getIconUrl;
@@ -24,7 +26,7 @@ const seaPosition = { lat: 32.0, lng: 33.0 };
 const jordanPosition = { lat: 32.0667, lng: 35.9333 };
 const lebanonPosition = { lat: 33.8547, lng: 35.8623 }; // Beirut, Lebanon
 const jerusalemPosition = { lat: 31.7683, lng: 35.2137 };
-const milesToMeters = miles => miles * 1609.34;
+
 
 const MapClickHandler = ({ onMapClick }) => {
   useMapEvents({
@@ -33,27 +35,41 @@ const MapClickHandler = ({ onMapClick }) => {
   return null;
 };
 
-const MissilePath = ({ startPosition, endPosition, animate, delay = 0, missileId, speed }) => {
-  console.log('MissilePath rendered');
+const MissilePath = ({ startPosition, endPosition, animate, delay = 0, missileId, speed, classification }) => {
   const map = useMap();
   const missileRef = useRef(null);
   const pathRef = useRef(null);
   const dispatch = useDispatch();
   const isInterceptionMode = useSelector((state) => state.interception.isInterceptionMode);
   const isInterceptionModeRef = useRef(isInterceptionMode); // Create a ref to store the interception mode
-
+  const reportInterception = useSelector(state => state.reportInterception.reportInterception);
+  const reportInterceptionRef = useRef(reportInterception);
   // Update the ref when the state changes
   useEffect(() => {
     isInterceptionModeRef.current = isInterceptionMode;
   }, [isInterceptionMode]);
 
   useEffect(() => {
+    reportInterceptionRef.current = reportInterception;
+  }, [reportInterception]);
+
+  useEffect(() => {
     let animationTimer;
     if (animate) {
       animationTimer = setTimeout(() => {
+        // Determine color based on classification
+        let color;
+        if (classification === "טיל אדום") {
+          color = "#ef4444";
+        } else if (classification === "טיל ירוק") {
+          color = "#10b981";
+        } else if (classification === "טיל צהוב") {
+          color = "#f59e0b";
+        }
+
         // Create the path
-        const path = L.polyline([startPosition, endPosition], {
-          color: "#ef4444",
+        const path = L.polyline.antPath([startPosition, endPosition], {
+          color: color,
           weight: 3,
         });
         pathRef.current = path;
@@ -75,16 +91,22 @@ const MissilePath = ({ startPosition, endPosition, animate, delay = 0, missileId
 
         // Attach click event to the missile to show details
         missile.on('click', () => {
-          if (isInterceptionModeRef.current) {  // Use the ref value here instead of state
+          if (isInterceptionModeRef.current) {
+            if (!reportInterceptionRef.current) {
+              alert('לא ניתן להפעיל טיל כאשר לא דווח על ירי טיל');
+              return;
+            }
             dispatch(addInterceptedMissile(missileId));
             map.removeLayer(missile);
             map.removeLayer(path);
+            dispatch(decrementActualStock());
           } else {
             dispatch(setChosenMissile({
               id: missileId,
               startPosition,
               endPosition,
               speed: `${speed} קמ"ש`,
+              classification: classification,
             }));
           }
         });
@@ -132,12 +154,14 @@ const MissilePath = ({ startPosition, endPosition, animate, delay = 0, missileId
 
 
 const Map = () => {
- 
+
   const [miles, setMiles] = useState(1);
+  const milesToMeters = (miles) => (miles * 1609.34).toFixed(2);
   const [markerPosition, setMarkerPosition] = useState(position);
   const [markers, setMarkers] = useState([]);
   const [isAddingMarker, setIsAddingMarker] = useState(false);
   const [missileLaunched, setMissileLaunched] = useState(true);
+
 
   const handleDrop = (e) => {
     setMarkerPosition(e.latlng);
@@ -198,6 +222,7 @@ const Map = () => {
             endPosition={telAvivPosition}
             animate={missileLaunched}
             speed={10}
+            classification="טיל אדום"
           />
 
           <MissilePath
@@ -207,6 +232,7 @@ const Map = () => {
             animate={missileLaunched}
             delay={3000}
             speed={20}
+            classification="טיל ירוק"
           />
           <MissilePath
             missileId="3"
@@ -215,6 +241,7 @@ const Map = () => {
             animate={missileLaunched}
             delay={6000}
             speed={15}
+            classification="טיל צהוב"
           />
 
         </MapContainer>
@@ -222,7 +249,7 @@ const Map = () => {
 
       <div className="absolute bottom-4 right-4 bg-white p-4 shadow-lg rounded-lg flex flex-col items-center">
         <label htmlFor="mileRange" className="font-semibold text-gray-700 mb-2 text-right" dir="rtl">
-          רדיוס המעגל: {miles} {miles === 1 ? 'מייל' : 'מיילים'}
+          מרחק הרדיוס מן הנ.צ שלי: {milesToMeters(miles)} מטרים
         </label>
 
         <input

@@ -1,13 +1,21 @@
 'use client'; // Important for client components
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DraggableScreen from '../Tests/DraggableScreen';
-import { increment, decrement } from '../../store/missileStockSlice'; // Adjust the path if necessary
+import { incrementStockUI, decrementStockUI } from '../../store/missileStockSlice'; // Adjust the path if necessary
 
 const MissileStock = () => {
   const dispatch = useDispatch();
-  const stock = useSelector((state) => state.missileStock.stock); // Access the stock state
+  const stockUI = useSelector((state) => state.missileStock.stockUI); // Access the stockUI state
+  const actualStock = useSelector((state) => state.missileStock.actualStock); // Access the actualStock state
+
+  // useEffect hook to log "good job" if stockUI equals actualStock
+  useEffect(() => {
+    if (stockUI === actualStock) {
+      console.log('good job');
+    }
+  }, [stockUI, actualStock]); // This hook will run every time stockUI or actualStock changes
 
   return (
     <DraggableScreen id="1" initialPosition={{ x: 20, y: 20 }}>
@@ -21,23 +29,23 @@ const MissileStock = () => {
         <p className="text-md font-medium text-gray-700 mb-4">
           כמות הטילים במלאי:{' '}
           <span className="text-green-600 font-bold text-lg">
-            {stock}
+            {stockUI}
           </span>
         </p>
 
-        {/* Buttons */}
+        {/* Plus and Minus Buttons */}
         <div className="flex justify-center gap-2">
           <button
-            onClick={() => dispatch(increment())}
+            onClick={() => dispatch(incrementStockUI())}
             className="px-3 py-1.5 bg-green-500 text-white rounded-md shadow-sm hover:bg-green-600 transition-all duration-200 transform hover:scale-105 text-sm"
           >
-            הוסף טיל
+            +
           </button>
           <button
-            onClick={() => dispatch(decrement())}
+            onClick={() => dispatch(decrementStockUI())}
             className="px-3 py-1.5 bg-red-500 text-white rounded-md shadow-sm hover:bg-red-600 transition-all duration-200 transform hover:scale-105 text-sm"
           >
-            הורד טיל
+            -
           </button>
         </div>
       </div>

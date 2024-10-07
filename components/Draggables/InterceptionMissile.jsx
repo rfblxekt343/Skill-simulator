@@ -14,13 +14,13 @@ const InterceptionMissile = () => {
   
 
   return (
-    <DraggableScreen id="3" initialPosition={{ x: 20, y: 20 }}>
+    <DraggableScreen id="3" initialPosition={{ x: 20, y: 80 }}>
       <div className="bg-white p-3 rounded-lg shadow-md">
         <h1 className="text-lg font-bold mb-2 text-center">יירוט טילים</h1>
         <button
           onClick={handleInterceptionClick}
           className={`w-full py-2 px-4 rounded ${
-            isInterceptionMode ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-blue-500 hover:bg-blue-600 text-white'
+            isInterceptionMode ? 'bg-rose-400 hover:bg-rose-500 text-white' : 'bg-teal-300 hover:bg-teal-400 text-white'
           }`}
         >
           {isInterceptionMode ? 'ביטול מצב יירוט' : 'הפעלת מצב יירוט'}
