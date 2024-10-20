@@ -3,6 +3,9 @@ import missileStockReducer from './missileStockSlice';
 import chosenMissileReducer from './chosenMissileSlice';
 import interceptionReducer from './interceptionSlice';
 import reportInterceptionReducer from './reportInterceptionSlice';
+//
+import missileStockGameReducer from './game/missileStockGameSlice';
+import interceptionGameReducer from './game/interceptionGameSlice';
 
 const store = configureStore({
   reducer: {
@@ -10,6 +13,8 @@ const store = configureStore({
     chosenMissile: chosenMissileReducer,
     interception: interceptionReducer,
     reportInterception: reportInterceptionReducer,
+    missileStockGame: missileStockGameReducer,
+    interceptionGame: interceptionGameReducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
 });

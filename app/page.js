@@ -2,7 +2,6 @@ import LogInForm from "../components/LogInForm"; // Uncomment if needed
 import TimeManagement from "../components/Tests/TimeManagement"; // Uncomment if needed
 import HandlingPressureTest from "../components/Tests/HandlingPressure"; // Uncomment if needed
 import InterceptorManagementTest from "../components/Tests/InterceptorManagement"; // Uncomment if needed
-import Game from "../components/Game"; // Uncomment if needed
 import Map from "../components/Map"; // Uncomment if needed
 import SimulatorPage from "./sadirLogin/page"; // Uncomment if needed
 
@@ -23,7 +22,7 @@ export default function Home() {
       {/* <TimeManagement /> */}
       {/* <HandlingPressureTest/> */}
       {/* <InterceptorManagementTest/> */}
-      {/* <Game /> */}
+     
     </div>
   );
 }

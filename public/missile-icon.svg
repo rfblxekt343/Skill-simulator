@@ -10,11 +10,14 @@
     </radialGradient>
   </defs>
   
-  <!-- Missile body -->
-  <path d="M20 50 L80 50 L75 90 L25 90 Z" fill="url(#bodyGradient)" />
-  
-  <!-- Missile nose -->
-  <path d="M30 50 Q50 10 70 50 Z" fill="url(#noseGradient)" />
+  <!-- Missile body with stroke and shadow effect -->
+  <path d="M20 50 L80 50 L75 90 L25 90 Z" fill="url(#bodyGradient)" stroke="#2c3e50" stroke-width="2"/>
+
+  <!-- Highlights for the body -->
+  <path d="M20 50 L50 20 L80 50 L75 90 L25 90 L20 50 Z" fill="rgba(255, 255, 255, 0.2)" />
+
+  <!-- Missile nose with shadow effect -->
+  <path d="M30 50 Q50 10 70 50 Z" fill="url(#noseGradient)" stroke="#8e44ad" stroke-width="2"/>
   
   <!-- Fins -->
   <path d="M25 90 L15 100 L25 95 Z" fill="#666" />

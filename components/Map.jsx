@@ -44,6 +44,15 @@ const MissilePath = ({ startPosition, endPosition, animate, delay = 0, missileId
   const isInterceptionModeRef = useRef(isInterceptionMode); // Create a ref to store the interception mode
   const reportInterception = useSelector(state => state.reportInterception.reportInterception);
   const reportInterceptionRef = useRef(reportInterception);
+  const audioRef = useRef(new Audio('/sounds/טיל-שוגר.wav'));
+
+  useEffect(() => {
+    // Clean up the audio object on unmount
+    return () => {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0; // Reset the audio to start
+    };
+  }, []);
   // Update the ref when the state changes
   useEffect(() => {
     isInterceptionModeRef.current = isInterceptionMode;
@@ -96,6 +105,7 @@ const MissilePath = ({ startPosition, endPosition, animate, delay = 0, missileId
               alert('לא ניתן להפעיל טיל כאשר לא דווח על ירי טיל');
               return;
             }
+            audioRef.current.play();
             dispatch(addInterceptedMissile(missileId));
             map.removeLayer(missile);
             map.removeLayer(path);
@@ -113,7 +123,8 @@ const MissilePath = ({ startPosition, endPosition, animate, delay = 0, missileId
 
         // Animate the missile
         const animateMissile = () => {
-          const durationInMs = 70000 * (10 / speed);
+          const durationInMs = 120000 * (10 / speed);
+
           const startTime = Date.now();
 
           const animate = () => {
@@ -178,7 +189,7 @@ const Map = () => {
   }, [isAddingMarker]);
 
   return (
-    <div className="flex flex-col items-center p-4 bg-gray-100 min-h-screen">
+    <div className="flex flex-col items-center p-4  min-h-screen">
       <div className="w-full h-[75vh] md:w-[90vw] lg:w-[85vw] max-w-screen-xl mt-12">
         <MapContainer
           center={israelCenter}

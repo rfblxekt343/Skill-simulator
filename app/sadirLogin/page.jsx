@@ -35,10 +35,13 @@ const SimulatorPage = () => {
   };
 
   return (
-    <div className="relative w-full h-screen overflow-hidden">
+    
+    <div className="relative w-full h-screen overflow-hidden bg-cover bg-center"
+    style={{ backgroundImage: "url('/EmptyBackground.PNG')" }}
+     >
       {/* Draggable Components */}
       <MissileStock />
-      <MissileDetails />  
+      <MissileDetails />
       <InterceptionMissile />
       <Classification />
       <ReportInterception />

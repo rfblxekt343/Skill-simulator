@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, {  useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DraggableScreen from '../Tests/DraggableScreen';
 import { setInterceptionMode } from '../../store/interceptionSlice';
@@ -7,9 +7,26 @@ import { setInterceptionMode } from '../../store/interceptionSlice';
 const InterceptionMissile = () => {
   const dispatch = useDispatch();
   const isInterceptionMode = useSelector((state) => state.interception.isInterceptionMode);
+  const isLaunching = isInterceptionMode;
+  const audioRefStart = useRef(null);
+  const audioRefStop = useRef(null);
+
+  useEffect(() => {
+    // Initialize the audio
+    audioRefStart.current = new Audio('/sounds/בחר-טיל-לשיגור.wav'); // Adjust the path if needed
+    audioRefStop.current = new Audio('/sounds/שיגור-הופסק.wav'); // Adjust the path if needed
+  }, []);
+
 
   const handleInterceptionClick = () => {
     dispatch(setInterceptionMode(!isInterceptionMode));
+
+    if (!isLaunching) {
+      audioRefStart.current.play();
+      //dispatch(decrementStock());
+    }else{
+      audioRefStop.current.play();
+    }
   };
   
 
