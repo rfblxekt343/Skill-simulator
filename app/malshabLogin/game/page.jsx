@@ -1,20 +1,27 @@
 "use client";
-import React from 'react';
+
+import React, { useState } from 'react';
 import MapGame from '../../../components/GameComponents/MapGame';
 import TimerGame from '../../../components/GameComponents/TimerGame';
 import LaunchMissile from '../../../components/GameComponents/InterceptionMissileGame';
-import MissileStockGame from '../../../components/GameComponents/MissileStockGame'; 
+import MissileStockGame from '../../../components/GameComponents/MissileStockGame';
 import MissileDetailsGame from '../../../components/GameComponents/MissileDetailsGame';
+import GameOverModal from '../../../components/GameComponents/GameOverModal';
 
 const Game = () => {
+    const [showModal, setShowModal] = useState(false);
+
+    const handleTimerEnd = () => {
+        setShowModal(true);
+    }
     return (
         <div
-          className="relative w-full h-screen overflow-hidden"
-          style={{
-            backgroundImage: "url('/EmptyBackground.PNG')", // Path to your image
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
+            className="relative w-full h-screen overflow-hidden"
+            style={{
+                backgroundImage: "url('/EmptyBackground.PNG')", // Path to your image
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+            }}
         >
             {/* Map Background */}
             <div className="absolute inset-0 z-0">
@@ -23,7 +30,7 @@ const Game = () => {
 
             {/* Timer at the top-right */}
             <div className="absolute top-2 right-4 z-20 pointer-events-auto">
-                <TimerGame />
+                <TimerGame onTimerEnd={handleTimerEnd} />
             </div>
 
             {/* Missile Stock Display in the top-left */}
@@ -40,6 +47,10 @@ const Game = () => {
             <div className="absolute bottom-10 left-4 z-20 bg-white bg-opacity-80 rounded-lg shadow-lg p-4 max-w-xs">
                 <MissileDetailsGame />
             </div>
+            <GameOverModal
+                isVisible={showModal}
+                
+            />
         </div>
     );
 };

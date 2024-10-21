@@ -1,26 +1,34 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  stock: 50,  // Stock visible to the user
+  stock: 25,        // Total missiles to intercept
+  intercepted: 0,   // Missiles successfully intercepted by the player
+  missed: 0         // Missiles missed by the player
 };
 
 const missileStockGameSlice = createSlice({
   name: 'missileStockGame',
   initialState,
   reducers: {
-    decrementStock: (state, action) => {
-      const decrementValue = action.payload;  // Get the value to decrease by
-      if (state.stock >= decrementValue) {  // Ensure stock does not go below 0
-        state.stock -= decrementValue;
-      } else {
-        state.stock = 0;  // Set stock to 0 if decrement exceeds current stock
+    interceptMissile: (state) => {
+      if (state.stock > 0) {
+        state.stock -= 1;
+        state.intercepted += 1;
       }
     },
-    resetStock: (state) => {
-      state.stock = 10;  // Reset stock to 10
+    missMissile: (state) => {
+      if (state.stock > 0) {
+        state.stock -= 1;
+        state.missed += 1;
+      }
     },
-  },
+    resetGame: (state) => {
+      state.stock = 25;  // Reset stock to 25 (or a bigger number if needed)
+      state.intercepted = 0;
+      state.missed = 0;
+    }
+  }
 });
 
-export const { decrementStock, resetStock } = missileStockGameSlice.actions;
+export const { interceptMissile, missMissile, resetGame } = missileStockGameSlice.actions;
 export default missileStockGameSlice.reducer;

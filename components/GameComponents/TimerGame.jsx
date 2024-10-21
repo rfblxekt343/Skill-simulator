@@ -2,11 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 
-const Timer = () => {
+const Timer = ({onTimerEnd}) => {
   const [timeLeft, setTimeLeft] = useState(90); // 1.5 minutes in seconds
 
   useEffect(() => {
-    if (timeLeft <= 0) return; // Stop if the countdown has reached 0
+    if (timeLeft <= 0){
+      onTimerEnd();
+      return;
+    }; // Stop if the countdown has reached 0
 
     const timerInterval = setInterval(() => {
       setTimeLeft((prevTime) => prevTime - 1); // Decrease time left by 1 second

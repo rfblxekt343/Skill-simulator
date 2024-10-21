@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FaRocket } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
-import { decrementStock } from '../../store/game/missileStockGameSlice';
 import { setInterceptionMode } from '../../store/game/interceptionGameSlice';
 
 const InterceptionMissileGame = () => {
@@ -44,7 +43,6 @@ const InterceptionMissileGame = () => {
     // Play appropriate sound and update stock
     if (!isLaunching) {
       audioRefStart.current.play();
-      dispatch(decrementStock(0));
     } else {
       audioRefStop.current.play();
     }

@@ -6,7 +6,7 @@ import "leaflet-ant-path";
 import { useDispatch, useSelector } from 'react-redux';
 import { setChosenMissile } from '../../store/game/chosenMissileGameSlice';
 import { addInterceptedMissile } from '../../store/game/interceptionGameSlice';
-import { decrementStock } from '../../store/game/missileStockGameSlice';
+import { interceptMissile,missMissile } from '../../store/game/missileStockGameSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Fix Leaflet's default icon path issues
@@ -124,7 +124,7 @@ const MissilePath = ({ startPosition, endPosition, animate, delay = 0, missileId
 
             if (classification !== "טיל אדום") {
               // If not "טיל אדום", reduce missile stock by 10 points
-              dispatch(decrementStock(10));
+              dispatch(missMissile());
             }
             audioRef.current.play();
             const interceptorStartPosition = map.getCenter();
@@ -165,7 +165,7 @@ const MissilePath = ({ startPosition, endPosition, animate, delay = 0, missileId
                     explosionSoundRef.current.play();
                     setShowExplosion(true);
                     setExplosionPosition(missile.getLatLng());
-                    dispatch(decrementStock(1));
+                    dispatch(interceptMissile());
                     setTimeout(() => {
 
                       setShowExplosion(false);
