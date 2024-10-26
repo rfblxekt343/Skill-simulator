@@ -110,7 +110,8 @@ export default function LogInForm() {
                     onChange={handleChange}
                     className="radio checked:bg-lime-200"
                   />
-                  <span className="label-text ml-2 text-white">מלש"ב</span>
+                  <span className="label-text ml-2 text-white">מלש&quot;ב</span>
+
                 </label>
               </div>
               <div className="form-control">
