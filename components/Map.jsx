@@ -47,10 +47,15 @@ const MissilePath = ({ startPosition, endPosition, animate, delay = 0, missileId
   const audioRef = useRef(new Audio('/sounds/טיל-שוגר.wav'));
 
   useEffect(() => {
+    // Store ref in a variable to avoid cleanup issues
+    const audio = audioRef.current;
+    
     // Clean up the audio object on unmount
     return () => {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0; // Reset the audio to start
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0; // Reset the audio to start
+      }
     };
   }, []);
   // Update the ref when the state changes

@@ -16,7 +16,7 @@ const Timer = ({onTimerEnd}) => {
     }, 1000);
 
     return () => clearInterval(timerInterval); // Cleanup the interval on component unmount
-  }, [timeLeft]);
+  }, [timeLeft, onTimerEnd]);
 
   // Calculate minutes and seconds from timeLeft
   const minutes = Math.floor(timeLeft / 60);

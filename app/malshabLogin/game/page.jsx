@@ -1,12 +1,26 @@
 "use client";
 
-import React, { useState } from 'react';
-import MapGame from '../../../components/GameComponents/MapGame';
-import TimerGame from '../../../components/GameComponents/TimerGame';
-import LaunchMissile from '../../../components/GameComponents/InterceptionMissileGame';
-import MissileStockGame from '../../../components/GameComponents/MissileStockGame';
-import MissileDetailsGame from '../../../components/GameComponents/MissileDetailsGame';
-import GameOverModal from '../../../components/GameComponents/GameOverModal';
+import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+
+const MapGame = dynamic(() => import('../../../components/GameComponents/MapGame'), {
+  ssr: false
+});
+const TimerGame = dynamic(() => import('../../../components/GameComponents/TimerGame'), {
+  ssr: false
+});
+const LaunchMissile = dynamic(() => import('../../../components/GameComponents/InterceptionMissileGame'), {
+  ssr: false
+});
+const MissileStockGame = dynamic(() => import('../../../components/GameComponents/MissileStockGame'), {
+  ssr: false
+});
+const MissileDetailsGame = dynamic(() => import('../../../components/GameComponents/MissileDetailsGame'), {
+  ssr: false
+});
+const GameOverModal = dynamic(() => import('../../../components/GameComponents/GameOverModal'), {
+  ssr: false
+});
 
 const Game = () => {
     const [showModal, setShowModal] = useState(false);

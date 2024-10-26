@@ -21,7 +21,7 @@ const TimeManagement = () => {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
-  }, [on, elapsed]);
+  }, [on, elapsed, tick]);
 
   const tick = () => {
     setElapsed(prevElapsed => prevElapsed + 1);
