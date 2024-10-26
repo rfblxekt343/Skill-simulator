@@ -72,10 +72,11 @@ const MissilePath = ({ startPosition, endPosition, animate, delay = 0, missileId
   const isInterceptionModeRef = useRef(isInterceptionMode);
   const [showExplosion, setShowExplosion] = useState(false);
   const [explosionPosition, setExplosionPosition] = useState(null);
+  
   const audioRef = useRef(new Audio('/sounds/טיל-שוגר.wav'));
   const explosionSoundRef = useRef(new Audio('/sounds/Explosion.mp3'));
-
   useEffect(() => {
+    
     return () => {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
