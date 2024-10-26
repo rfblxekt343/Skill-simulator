@@ -83,7 +83,7 @@ export default function LogInForm() {
        <div
         className="container mx-auto p-6 max-w-lg card bg-white shadow-lg rounded-lg"
         style={{
-          backgroundImage: "url('/formBackground.jpg')",
+          backgroundImage: "url('/formBackground.JPG')",
           backgroundSize: "contain", 
           backgroundSize: "cover", // Ensure the background covers the whole container
           backgroundRepeat: "no-repeat", // Prevent the background from repeating
