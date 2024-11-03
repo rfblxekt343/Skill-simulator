@@ -67,6 +67,7 @@ const MissilePath = ({ startPosition, endPosition, animate, delay = 0, missileId
   const pathRef = useRef(null);
   const interceptorRef = useRef(null);
   const interceptorAnimationFrameRef = useRef(null);
+  const missileAnimationFrameRef = useRef(null);
   const dispatch = useDispatch();
   const isInterceptionMode = useSelector((state) => state.interceptionGame.isInterceptionMode);
   const isInterceptionModeRef = useRef(isInterceptionMode);
@@ -75,13 +76,16 @@ const MissilePath = ({ startPosition, endPosition, animate, delay = 0, missileId
   
   const audioRef = useRef(new Audio('/sounds/טיל-שוגר.wav'));
   const explosionSoundRef = useRef(new Audio('/sounds/Explosion.mp3'));
+
   useEffect(() => {
-    
     return () => {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
       explosionSoundRef.current.pause();
       explosionSoundRef.current.currentTime = 0;
+      if (missileAnimationFrameRef.current) {
+        cancelAnimationFrame(missileAnimationFrameRef.current);
+      }
     };
   }, []);
 
@@ -122,9 +126,7 @@ const MissilePath = ({ startPosition, endPosition, animate, delay = 0, missileId
         missile.addTo(map);
         missile.on('click', () => {
           if (isInterceptionModeRef.current) {
-
             if (classification !== "טיל אדום") {
-              // If not "טיל אדום", reduce missile stock by 10 points
               dispatch(missMissile());
             }
             audioRef.current.play();
@@ -162,13 +164,11 @@ const MissilePath = ({ startPosition, endPosition, animate, delay = 0, missileId
                   interceptorAnimationFrameRef.current = requestAnimationFrame(animate);
                 } else {
                   if (isInterceptionModeRef.current) {
-
                     explosionSoundRef.current.play();
                     setShowExplosion(true);
                     setExplosionPosition(missile.getLatLng());
                     dispatch(interceptMissile());
                     setTimeout(() => {
-
                       setShowExplosion(false);
                       map.removeLayer(missile);
                       map.removeLayer(interceptor);
@@ -208,8 +208,12 @@ const MissilePath = ({ startPosition, endPosition, animate, delay = 0, missileId
 
             missile.setLatLng([lat, lng]);
 
-            if (progress < 1 && !isInterceptionModeRef.current) {
-              requestAnimationFrame(animate);
+            if (progress < 1) {
+              missileAnimationFrameRef.current = requestAnimationFrame(animate);
+            } else {
+              // Remove missile and path when it reaches its destination
+              map.removeLayer(missile);
+              map.removeLayer(path);
             }
           };
 
@@ -224,6 +228,9 @@ const MissilePath = ({ startPosition, endPosition, animate, delay = 0, missileId
       clearTimeout(animationTimer);
       if (interceptorAnimationFrameRef.current) {
         cancelAnimationFrame(interceptorAnimationFrameRef.current);
+      }
+      if (missileAnimationFrameRef.current) {
+        cancelAnimationFrame(missileAnimationFrameRef.current);
       }
       if (pathRef.current && map.hasLayer(pathRef.current)) {
         map.removeLayer(pathRef.current);
@@ -328,14 +335,7 @@ const Map = () => {
             />
           ))}
 
-          <MissilePath
-            missileId="1"
-            startPosition={seaPosition}
-            endPosition={telAvivPosition}
-            animate={missileLaunched}
-            speed={10}
-            classification="טיל אדום"
-          />
+
 
           <MissilePath
             missileId="2"

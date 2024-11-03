@@ -1,23 +1,35 @@
 'use client';
-
 import React from 'react';
 import { useSelector } from 'react-redux';
-
 import { Trophy, Target, Package } from 'lucide-react';
 
-const calculateScore = (intercepted, missed) => {
-  const interceptionScore = intercepted * 10;
-  const missedPenalty = missed * 5;
-  return interceptionScore - missedPenalty;
+const calculateScore = (intercepted, missed, totalMissiles) => {
+  // Each successful interception is worth (100 / totalMissiles) points
+  const pointsPerIntercept = 100 / totalMissiles;
+  // Calculate base score from interceptions
+  const interceptionScore = intercepted * pointsPerIntercept;
+  // Calculate penalty for missed missiles (half the points per intercept)
+  const missedPenalty = missed * (pointsPerIntercept / 2);
+  // Calculate final score, ensuring it doesn't go below 0 or above 100
+  return Math.min(Math.max(Math.round(interceptionScore - missedPenalty), 0), 100);
 };
-const GameOverModal = ({ isVisible }) => {
- 
-const stock = useSelector((state) => state.missileStockGame.stock);
-const intercepted = useSelector((state) => state.missileStockGame.intercepted);
-const missed = useSelector((state) => state.missileStockGame.missed);
 
-const grade = calculateScore(intercepted, missed); // Calculate the score
+const GameOverModal = ({ isVisible }) => {
+  const TOTAL_MISSILES = 25; // Total missiles in the game
+  const stock = useSelector((state) => state.missileStockGame.stock);
+  const intercepted = useSelector((state) => state.missileStockGame.intercepted);
+  const missed = useSelector((state) => state.missileStockGame.missed);
+
+  // Calculate the final grade (0-100)
+  const grade = calculateScore(intercepted, missed, TOTAL_MISSILES);
   
+  // Get grade classification
+  const getGradeClass = (score) => {
+    if (score >= 90) return 'text-green-600';
+    if (score >= 70) return 'text-blue-600';
+    if (score >= 50) return 'text-yellow-600';
+    return 'text-red-600';
+  };
 
   if (!isVisible) return null;
 
@@ -36,7 +48,7 @@ const grade = calculateScore(intercepted, missed); // Calculate the score
           {/* Grade */}
           <div className="text-center mb-6">
             <p className="text-sm text-gray-600 mb-1">ציון סופי</p>
-            <p className="text-5xl font-bold text-blue-600">{grade}</p>
+            <p className={`text-5xl font-bold ${getGradeClass(grade)}`}>{grade}</p>
           </div>
 
           {/* Stats Grid */}
@@ -44,7 +56,7 @@ const grade = calculateScore(intercepted, missed); // Calculate the score
             <div className="bg-blue-50 p-3 rounded-lg">
               <Target className="w-6 h-6 text-red-500 mx-auto mb-2" />
               <p className="text-sm text-gray-600">טילים שיורטו</p>
-              <p className="text-xl font-bold text-blue-600">{intercepted}/{stock}</p>
+              <p className="text-xl font-bold text-blue-600">{intercepted}/{TOTAL_MISSILES}</p>
             </div>
             <div className="bg-blue-50 p-3 rounded-lg">
               <Package className="w-6 h-6 text-blue-500 mx-auto mb-2" />
@@ -58,9 +70,9 @@ const grade = calculateScore(intercepted, missed); // Calculate the score
         <div className="p-6 pt-0">
           <button
             onClick={() => window.location.href = '/'}
-            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-6 rounded-lg 
-                     font-bold text-lg shadow-md hover:from-blue-700 hover:to-blue-800 
-                     transform hover:scale-105 transition-all duration-200"
+            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-6 rounded-lg
+                    font-bold text-lg shadow-md hover:from-blue-700 hover:to-blue-800
+                    transform hover:scale-105 transition-all duration-200"
           >
             חזור לדף הבית
           </button>

@@ -62,7 +62,7 @@ const Game = () => {
         </div>
 
         {/* Missile Stock */}
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 -mt-1">
           <MissileStockGame />
         </div>
       </div>

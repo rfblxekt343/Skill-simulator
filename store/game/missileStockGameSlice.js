@@ -1,9 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const TOTAL_MISSILES = 25;
+
 const initialState = {
-  stock: 25,        // Total missiles to intercept
-  intercepted: 0,   // Missiles successfully intercepted by the player
-  missed: 0         // Missiles missed by the player
+  stock: TOTAL_MISSILES,  // Starting stock of interceptor missiles
+  intercepted: 0,         // Successfully intercepted missiles
+  missed: 0              // Missed missiles
 };
 
 const missileStockGameSlice = createSlice({
@@ -23,7 +25,7 @@ const missileStockGameSlice = createSlice({
       }
     },
     resetGame: (state) => {
-      state.stock = 25;  // Reset stock to 25 (or a bigger number if needed)
+      state.stock = TOTAL_MISSILES;
       state.intercepted = 0;
       state.missed = 0;
     }
