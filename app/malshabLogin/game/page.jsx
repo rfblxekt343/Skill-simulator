@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
@@ -23,50 +23,72 @@ const GameOverModal = dynamic(() => import('../../../components/GameComponents/G
 });
 
 const Game = () => {
-    const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-    const handleTimerEnd = () => {
-        setShowModal(true);
-    }
-    return (
-        <div
-            className="relative w-full h-screen overflow-hidden"
-            style={{
-                backgroundImage: "url('/EmptyBackground.PNG')", // Path to your image
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-            }}
-        >
-            {/* Map Background */}
-            <div className="absolute inset-0 z-0">
-                <MapGame />
-            </div>
+  // Handle window resize for responsive layout
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    handleResize(); // Initial check
+    window.addEventListener('resize', handleResize);
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-            {/* Timer at the top-right */}
-            <div className="absolute top-2 right-4 z-20 pointer-events-auto">
-                <TimerGame onTimerEnd={handleTimerEnd} />
-            </div>
+  const handleTimerEnd = () => {
+    setShowModal(true);
+  };
 
-            {/* Missile Stock Display in the top-left */}
-            <div className="absolute top-2 left-1 z-20 pointer-events-auto">
-                <MissileStockGame />
-            </div>
+  return (
+    <div
+      className="relative w-full h-screen overflow-hidden bg-cover bg-center"
+      style={{
+        backgroundImage: "url('/EmptyBackground.PNG')",
+      }}
+    >
+      {/* Map Background - Full screen with padding for UI elements */}
+      <div className="absolute inset-0 z-0">
+        <MapGame />
+      </div>
 
-            {/* Positioning LaunchMissile button in the bottom right corner */}
-            <div className="absolute bottom-14 right-10 z-20">
-                <LaunchMissile />
-            </div>
-
-            {/* Missile Details Game Component */}
-            <div className="absolute bottom-10 left-4 z-20 bg-white bg-opacity-80 rounded-lg shadow-lg p-4 max-w-xs">
-                <MissileDetailsGame />
-            </div>
-            <GameOverModal
-                isVisible={showModal}
-                
-            />
+      {/* Top Bar - Flexible container for Timer and Missile Stock */}
+      <div className="absolute top-0 left-0 right-0 z-20 p-4 flex justify-between items-start">
+        {/* Timer */}
+        <div className="flex-shrink-0">
+          <TimerGame onTimerEnd={handleTimerEnd} />
         </div>
-    );
+
+        {/* Missile Stock */}
+        <div className="flex-shrink-0">
+          <MissileStockGame />
+        </div>
+      </div>
+
+      {/* Bottom UI Container - Responsive positioning */}
+      <div className="absolute bottom-0 left-0 right-0 z-20 p-4 flex flex-col md:flex-row justify-between items-end gap-4">
+        {/* Missile Details - Adjusts width based on screen size */}
+        <div className="w-full md:w-auto md:max-w-xs">
+          <div className="bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-4 transform transition-all duration-300 hover:scale-105">
+            <MissileDetailsGame />
+          </div>
+        </div>
+
+        {/* Launch Button - Centered on mobile, right-aligned on desktop */}
+        <div className="w-full md:w-auto flex justify-center md:justify-end">
+          <LaunchMissile />
+        </div>
+      </div>
+
+      {/* Game Over Modal - Centered with responsive padding */}
+      <GameOverModal
+        isVisible={showModal}
+        className="mx-auto max-w-lg w-full px-4 sm:px-0"
+      />
+    </div>
+  );
 };
 
 export default Game;
