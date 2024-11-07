@@ -80,11 +80,11 @@ export default function LogInForm() {
       className="min-h-screen h-screen w-screen flex items-center justify-center bg-cover bg-center"
       style={{ backgroundImage: "url('/Background.PNG')" }}
     >
-       <div
+      <div
         className="container mx-auto p-6 max-w-lg card bg-white shadow-lg rounded-lg"
         style={{
           backgroundImage: "url('/formBackground.JPG')",
-          backgroundSize: "contain", 
+          backgroundSize: "contain",
           backgroundSize: "cover", // Ensure the background covers the whole container
           backgroundRepeat: "no-repeat", // Prevent the background from repeating
           backgroundPosition: "center", // Center the background image
@@ -108,7 +108,7 @@ export default function LogInForm() {
                     value="malshab"
                     checked={form.role === "malshab"}
                     onChange={handleChange}
-                    className="radio checked:bg-lime-200"
+                    className="radio border border-lime-400 checked:bg-lime-200"
                   />
                   <span className="label-text ml-2 text-white">מלש&quot;ב</span>
 
@@ -122,7 +122,7 @@ export default function LogInForm() {
                     value="sadir"
                     checked={form.role === "sadir"}
                     onChange={handleChange}
-                    className="radio checked:bg-lime-200"
+                    className="radio border border-lime-400 checked:bg-lime-200"
                   />
                   <span className="label-text ml-2 text-white">סדיר</span>
                 </label>
@@ -132,8 +132,8 @@ export default function LogInForm() {
 
           {form.role === "sadir" && (
             <div>
-              <div className="form-group">
-                <label className="text-right w-full text-sm text-gray-600">
+              <div className="form-group flex flex-col items-end">
+                <label className="text-sm text-white font-semibold shadow-sm">
                   מספר תעודת זהות
                 </label>
                 <input
@@ -146,8 +146,9 @@ export default function LogInForm() {
                 />
               </div>
 
-              <div className="form-group">
-                <label className="text-right w-full text-sm text-gray-600">
+
+              <div className="form-group flex flex-col items-end">
+                <label className="text-sm text-white font-semibold shadow-sm">
                   שם מלא
                 </label>
                 <input

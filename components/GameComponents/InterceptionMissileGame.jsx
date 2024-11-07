@@ -14,8 +14,8 @@ const InterceptionMissileGame = () => {
 
   useEffect(() => {
     // Initialize the audio
-    audioRefStart.current = new Audio('/sounds/בחר-טיל-לשיגור.wav');
-    audioRefStop.current = new Audio('/sounds/שיגור-הופסק.wav');
+    audioRefStart.current = new Audio('/sounds/chooseMissile.wav');
+    audioRefStop.current = new Audio('/sounds/stopped-intercept.wav');
 
     // Set up event listeners for when the audio files are loaded
     const handleAudioLoaded = () => {

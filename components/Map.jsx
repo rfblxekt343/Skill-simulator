@@ -44,7 +44,7 @@ const MissilePath = ({ startPosition, endPosition, animate, delay = 0, missileId
   const isInterceptionModeRef = useRef(isInterceptionMode); // Create a ref to store the interception mode
   const reportInterception = useSelector(state => state.reportInterception.reportInterception);
   const reportInterceptionRef = useRef(reportInterception);
-  const audioRef = useRef(new Audio('/sounds/טיל-שוגר.wav'));
+  const audioRef = useRef(new Audio('/sounds/missile-intercepted.wav'));
 
   useEffect(() => {
     // Store ref in a variable to avoid cleanup issues

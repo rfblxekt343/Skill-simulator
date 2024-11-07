@@ -13,8 +13,8 @@ const InterceptionMissile = () => {
 
   useEffect(() => {
     // Initialize the audio
-    audioRefStart.current = new Audio('/sounds/בחר-טיל-לשיגור.wav'); // Adjust the path if needed
-    audioRefStop.current = new Audio('/sounds/שיגור-הופסק.wav'); // Adjust the path if needed
+    audioRefStart.current = new Audio('/sounds/chooseMissile.wav'); // Adjust the path if needed
+    audioRefStop.current = new Audio('/sounds/stopped-intercept.wav'); // Adjust the path if needed
   }, []);
 
 
