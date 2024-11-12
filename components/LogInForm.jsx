@@ -17,6 +17,7 @@ export default function LogInForm() {
 
   const handleChange = useCallback((e) => {
     console.log("Input changed:", e.target.name, e.target.value);
+    console.log(process.env.MONGODB_URI);
     const { name, value } = e.target;
     setForm((prevForm) => ({
       ...prevForm,

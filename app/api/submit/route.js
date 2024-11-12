@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 const prisma = new PrismaClient();
 
 export async function POST(request) {
-  console.log("MongoDB URI:", process.env.MONGODB_URI);
+ 
   const { fullName, idNumber, course, role } = await request.json();
 
   // Simple validation
