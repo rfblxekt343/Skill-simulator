@@ -75,6 +75,9 @@ export default function LogInForm() {
   const handleStartGame = () => {
     router.push("/malshabLogin");
   };
+   const handleStartSadir = () =>{
+    router.push("/sadirLogin");
+   }
 
   return (
     <div
@@ -132,48 +135,55 @@ export default function LogInForm() {
           </fieldset>
 
           {form.role === "sadir" && (
-            <div>
-              <div className="form-group flex flex-col items-end">
-                <label className="text-sm text-white font-semibold shadow-sm">
-                  מספר תעודת זהות
-                </label>
-                <input
-                  type="text"
-                  name="idNumber"
-                  value={form.idNumber}
-                  onChange={handleChange}
-                  className="input input-bordered w-full p-2 border-gray-300 rounded-lg focus:border-lime-400 focus:outline-none focus:ring-1 focus:ring-lime-400"
-                  required
-                />
-              </div>
+             <button
+             type="button"
+             className="btn w-full py-3 px-4 bg-blue-500 text-white text-lg font-semibold rounded-lg hover:bg-blue-600 transition-all duration-200 ease-in-out"
+             onClick={handleStartSadir}
+           >
+             התחל סימולציה
+           </button>
+            // <div>
+            //   <div className="form-group flex flex-col items-end">
+            //     <label className="text-sm text-white font-semibold shadow-sm">
+            //       מספר תעודת זהות
+            //     </label>
+            //     <input
+            //       type="text"
+            //       name="idNumber"
+            //       value={form.idNumber}
+            //       onChange={handleChange}
+            //       className="input input-bordered w-full p-2 border-gray-300 rounded-lg focus:border-lime-400 focus:outline-none focus:ring-1 focus:ring-lime-400"
+            //       required
+            //     />
+            //   </div>
 
 
-              <div className="form-group flex flex-col items-end">
-                <label className="text-sm text-white font-semibold shadow-sm">
-                  שם מלא
-                </label>
-                <input
-                  type="text"
-                  name="fullName"
-                  value={form.fullName}
-                  onChange={handleChange}
-                  className="input input-bordered w-full p-2 border-gray-300 rounded-lg focus:border-lime-400 focus:outline-none focus:ring-1 focus:ring-lime-400"
-                  required
-                />
-              </div>
+            //   <div className="form-group flex flex-col items-end">
+            //     <label className="text-sm text-white font-semibold shadow-sm">
+            //       שם מלא
+            //     </label>
+            //     <input
+            //       type="text"
+            //       name="fullName"
+            //       value={form.fullName}
+            //       onChange={handleChange}
+            //       className="input input-bordered w-full p-2 border-gray-300 rounded-lg focus:border-lime-400 focus:outline-none focus:ring-1 focus:ring-lime-400"
+            //       required
+            //     />
+            //   </div>
 
-              <button
-                type="submit"
-                className="btn w-full py-3 px-4 bg-lime-500 text-white text-lg font-semibold rounded-lg hover:bg-lime-600 transition-all duration-200 ease-in-out"
-                disabled={loading}
-              >
-                {loading ? (
-                  <span className="loading loading-spinner text-white"></span>
-                ) : (
-                  "שלח"
-                )}
-              </button>
-            </div>
+            //   <button
+            //     type="submit"
+            //     className="btn w-full py-3 px-4 bg-lime-500 text-white text-lg font-semibold rounded-lg hover:bg-lime-600 transition-all duration-200 ease-in-out"
+            //     disabled={loading}
+            //   >
+            //     {loading ? (
+            //       <span className="loading loading-spinner text-white"></span>
+            //     ) : (
+            //       "שלח"
+            //     )}
+            //   </button>
+            // </div>
           )}
 
           {form.role === "malshab" && (
