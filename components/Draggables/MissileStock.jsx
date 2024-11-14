@@ -1,21 +1,39 @@
-'use client'; // Important for client components
+'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DraggableScreen from '../Tests/DraggableScreen';
-import { incrementStockUI, decrementStockUI } from '../../store/missileStockSlice'; // Adjust the path if necessary
+import { incrementStockUI, decrementStockUI } from '../../store/missileStockSlice';
+
+// Utility function for handling both click and touch events
+const useMultipleEvents = (handler) => {
+  return {
+    onClick: handler,
+    onTouchEnd: (e) => {
+      e.preventDefault(); // Prevent ghost clicks
+      handler(e);
+    },
+  };
+};
 
 const MissileStock = () => {
   const dispatch = useDispatch();
-  const stockUI = useSelector((state) => state.missileStock.stockUI); // Access the stockUI state
-  const actualStock = useSelector((state) => state.missileStock.actualStock); // Access the actualStock state
+  const stockUI = useSelector((state) => state.missileStock.stockUI);
+  const actualStock = useSelector((state) => state.missileStock.actualStock);
 
-  // useEffect hook to log "good job" if stockUI equals actualStock
   useEffect(() => {
     if (stockUI === actualStock) {
       console.log('good job');
     }
-  }, [stockUI, actualStock]); // This hook will run every time stockUI or actualStock changes
+  }, [stockUI, actualStock]);
+
+  const handleIncrement = useCallback(() => {
+    dispatch(incrementStockUI());
+  }, [dispatch]);
+
+  const handleDecrement = useCallback(() => {
+    dispatch(decrementStockUI());
+  }, [dispatch]);
 
   return (
     <DraggableScreen id="1" initialPosition={{ x: 20, y: 20 }}>
@@ -33,17 +51,38 @@ const MissileStock = () => {
           </span>
         </p>
 
-        {/* Plus and Minus Buttons */}
-        <div className="flex justify-center gap-2">
+        <div className="flex justify-center gap-4">
           <button
-            onClick={() => dispatch(incrementStockUI())}
-            className="px-3 py-1.5 bg-green-500 text-white rounded-md shadow-sm hover:bg-green-600 transition-all duration-200 transform hover:scale-105 text-sm"
+            {...useMultipleEvents(handleIncrement)}
+            className="
+              min-w-[44px] min-h-[44px]
+              px-3 py-1.5
+              bg-green-500 text-white
+              rounded-md shadow-sm
+              text-lg font-bold
+              transition-all duration-200
+              active:bg-green-700
+              active:scale-95
+              focus:outline-none focus:ring-2 focus:ring-green-400
+            "
+            aria-label="הוסף טיל"
           >
             +
           </button>
           <button
-            onClick={() => dispatch(decrementStockUI())}
-            className="px-3 py-1.5 bg-red-500 text-white rounded-md shadow-sm hover:bg-red-600 transition-all duration-200 transform hover:scale-105 text-sm"
+            {...useMultipleEvents(handleDecrement)}
+            className="
+              min-w-[44px] min-h-[44px]
+              px-3 py-1.5
+              bg-red-500 text-white
+              rounded-md shadow-sm
+              text-lg font-bold
+              transition-all duration-200
+              active:bg-red-700
+              active:scale-95
+              focus:outline-none focus:ring-2 focus:ring-red-400
+            "
+            aria-label="הורד טיל"
           >
             -
           </button>
