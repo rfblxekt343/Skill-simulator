@@ -9,15 +9,15 @@ const Classification = () => {
         <ul className="space-y-1 text-right" dir="rtl">
           <li className="flex items-center">
             <span className="inline-block w-3 h-3 bg-red-500 rounded-full ml-2"></span> {/* Reduced size and margin */}
-            <span className="text-sm">אדום - תפוח</span>
+            <span className="text-sm">אדום - טיל מסוכן</span>
           </li>
           <li className="flex items-center">
             <span className="inline-block w-3 h-3 bg-green-500 rounded-full ml-2"></span> {/* Reduced size and margin */}
-            <span className="text-sm">ירוק - מלפפון</span>
+            <span className="text-sm">ירוק - טיל לא מסוכן</span>
           </li>
           <li className="flex items-center">
             <span className="inline-block w-3 h-3 bg-yellow-500 rounded-full ml-2"></span> {/* Reduced size and margin */}
-            <span className="text-sm">צהוב - בננה</span>
+            <span className="text-sm">צהוב - טיל לא מסוכן</span>
           </li>
         </ul>
       </div>

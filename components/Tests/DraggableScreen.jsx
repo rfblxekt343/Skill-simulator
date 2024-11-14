@@ -3,20 +3,18 @@ import Draggable from 'react-draggable';
 
 const DraggableScreen = ({ id, children, initialPosition }) => {
   const [position, setPosition] = useState(initialPosition);
-  const draggableRef = useRef(null);  // Reference to the draggable element
+  const draggableRef = useRef(null);
 
-  // Handle window resize event
   useEffect(() => {
     const handleResize = () => {
       if (draggableRef.current) {
-        const draggableNode = draggableRef.current; // Directly use the ref for the DOM node
+        const draggableNode = draggableRef.current;
         const { offsetWidth, offsetHeight } = draggableNode;
         const { innerWidth, innerHeight } = window;
 
         let newX = position.x;
         let newY = position.y;
 
-        // Adjust if draggable element goes out of bounds horizontally
         if (newX + offsetWidth > innerWidth) {
           newX = innerWidth - offsetWidth;
         }
@@ -24,7 +22,6 @@ const DraggableScreen = ({ id, children, initialPosition }) => {
           newX = 0;
         }
 
-        // Adjust if draggable element goes out of bounds vertically
         if (newY + offsetHeight > innerHeight) {
           newY = innerHeight - offsetHeight;
         }
@@ -40,23 +37,20 @@ const DraggableScreen = ({ id, children, initialPosition }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, [position]);
 
-  // Event handlers
   const handleDrag = (e, data) => {
     setPosition({ x: data.x, y: data.y });
   };
 
   return (
-    <Draggable
-      position={position}
-      onDrag={handleDrag}
-      bounds="parent"
-    >
+    <Draggable position={position} onDrag={handleDrag} bounds="parent">
       <div
-        ref={draggableRef}  // Attach the ref directly to the draggable div
-        className="absolute p-2 border border-gray-300 bg-white bg-opacity-90 rounded-lg shadow-md flex flex-col items-center w-full sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4 pointer-events-auto z-10"
-      
+        ref={draggableRef}
+        className="absolute p-2 border border-gray-300 bg-white bg-opacity-90 rounded-lg shadow-md flex flex-col items-center 
+          w-full sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4 pointer-events-auto z-10"
       >
-       <div className="flex-1 text-center">{children}</div>
+        <div className="flex-1 text-center">
+          {children}
+        </div>
       </div>
     </Draggable>
   );

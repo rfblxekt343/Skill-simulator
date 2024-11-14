@@ -11,7 +11,7 @@ import ReportInterception from '../../components/Draggables/ReportInterception';
 import CitiesList from '../../components/Draggables/CitiesList';
 import Timer from '../../components/Timer';
 import Modal from '../../components/Modal';
-import VoiceMessage from '../../components/VoiceMessage';  // Import the new component
+import VoiceMessage from '../../components/VoiceMessage';
 
 const Map = dynamic(() => import('../../components/Map'), {
   ssr: false,
@@ -21,24 +21,22 @@ const SimulatorPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const reportInterception = useSelector(state => state.reportInterception.reportInterception);
 
-  // Show the modal after 10 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsModalOpen(true);
-    }, 10000); // 10 seconds
+    }, 10000);
 
-    return () => clearTimeout(timer); // Cleanup on component unmount
+    return () => clearTimeout(timer);
   }, []);
 
   const handleCloseModal = () => {
-    setIsModalOpen(false); // Close the modal when the user clicks close
+    setIsModalOpen(false);
   };
 
   return (
-    
     <div className="relative w-full h-screen overflow-hidden bg-cover bg-center"
-    style={{ backgroundImage: "url('/EmptyBackground.PNG')" }}
-     >
+      style={{ backgroundImage: "url('/EmptyBackground.PNG')" }}
+    >
       {/* Draggable Components */}
       <MissileStock />
       <MissileDetails />
@@ -46,23 +44,22 @@ const SimulatorPage = () => {
       <Classification />
       <ReportInterception />
       <CitiesList />
+
       {/* Timer */}
       <div className="absolute top-2 right-4 z-20 pointer-events-auto">
         <Timer initialMinutes={5} initialSeconds={0} />
       </div>
+
       {/* Map Background */}
       <div className="absolute inset-0 z-0">
         <Map />
       </div>
 
-
-
-      {/* Voice Talking Gif (conditional display) */}
+      {/* Voice Message */}
       <VoiceMessage isVisible={reportInterception} duration={2000} />
 
-      {/* Modal Component */}
+      {/* Modal */}
       <Modal isOpen={isModalOpen} onClose={handleCloseModal} />
-
     </div>
   );
 };
