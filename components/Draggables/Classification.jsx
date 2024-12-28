@@ -3,7 +3,7 @@ import DraggableScreen from '../Tests/DraggableScreen';
 
 const Classification = () => {
   return (
-    <DraggableScreen id="4" initialPosition={{ x: 20, y: 110 }}>
+    <DraggableScreen id="6" initialPosition={{ x: 20, y: 110 }}>
       <div className="p-2 bg-white shadow-lg rounded-lg">
         <h2 className="text-lg font-bold mb-2 text-right" dir="rtl">מקרא סיווג</h2>
         <ul className="space-y-1 text-right" dir="rtl">

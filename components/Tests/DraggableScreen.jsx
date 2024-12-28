@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Draggable from 'react-draggable';
 
-const DraggableScreen = ({ id, children, initialPosition }) => {
+const DraggableScreen = ({ id, children, initialPosition, nodeRef }) => {
   const [position, setPosition] = useState(initialPosition);
   const draggableRef = useRef(null);
 
@@ -42,7 +42,12 @@ const DraggableScreen = ({ id, children, initialPosition }) => {
   };
 
   return (
-    <Draggable position={position} onDrag={handleDrag} bounds="parent">
+    <Draggable 
+      position={position} 
+      onDrag={handleDrag} 
+      bounds="parent"
+      nodeRef={draggableRef}
+    >
       <div
         ref={draggableRef}
         className="absolute p-2 border border-gray-300 bg-white bg-opacity-90 rounded-lg shadow-md flex flex-col items-center 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DraggableScreen from '../Tests/DraggableScreen';
 import { incrementStockUI, decrementStockUI } from '../../store/missileStockSlice';
@@ -17,6 +17,7 @@ const useMultipleEvents = (handler) => {
 };
 
 const MissileStock = () => {
+  const nodeRef = useRef(null); // Add this ref for the draggable component
   const dispatch = useDispatch();
   const stockUI = useSelector((state) => state.missileStock.stockUI);
   const actualStock = useSelector((state) => state.missileStock.actualStock);
@@ -36,8 +37,11 @@ const MissileStock = () => {
   }, [dispatch]);
 
   return (
-    <DraggableScreen id="1" initialPosition={{ x: 20, y: 20 }}>
-      <div className="p-4 bg-white shadow-md rounded-lg max-w-xs w-full text-center border border-gray-200">
+    <DraggableScreen id="1" initialPosition={{ x: 20, y: 20 }} nodeRef={nodeRef}>
+      <div 
+        ref={nodeRef} 
+        className="p-4 bg-white shadow-md rounded-lg max-w-xs w-full text-center border border-gray-200"
+      >
         <h1 className="text-xl font-bold mb-3 text-gray-800">
           ניהול מלאי טילים
         </h1>

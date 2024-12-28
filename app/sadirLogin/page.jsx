@@ -8,7 +8,7 @@ import MissileDetails from '../../components/Draggables/MissileDetails';
 import InterceptionMissile from '../../components/Draggables/InterceptionMissile';
 import Classification from '../../components/Draggables/Classification';
 import ReportInterception from '../../components/Draggables/ReportInterception';
-import CitiesList from '../../components/Draggables/CitiesList';
+import WhatToIntercept from '../../components/Draggables/WhatToIntercept';
 import Timer from '../../components/Timer';
 import Modal from '../../components/Modal';
 import VoiceMessage from '../../components/VoiceMessage';
@@ -24,7 +24,7 @@ const SimulatorPage = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsModalOpen(true);
-    }, 10000);
+    }, 15000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -38,17 +38,18 @@ const SimulatorPage = () => {
       style={{ backgroundImage: "url('/EmptyBackground.PNG')" }}
     >
       {/* Draggable Components */}
+      <WhatToIntercept />
       <MissileStock />
       <MissileDetails />
-      <InterceptionMissile />
-      <Classification />
-      <ReportInterception />
-      <CitiesList />
+      {/* <InterceptionMissile /> */}
+      {/* <Classification /> */}
+      {/* <ReportInterception /> */}
+     
 
       {/* Timer */}
-      <div className="absolute top-2 right-4 z-20 pointer-events-auto">
+      {/* <div className="absolute top-2 right-4 z-20 pointer-events-auto">
         <Timer initialMinutes={5} initialSeconds={0} />
-      </div>
+      </div> */}
 
       {/* Map Background */}
       <div className="absolute inset-0 z-0">

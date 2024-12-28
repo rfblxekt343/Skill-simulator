@@ -1,6 +1,3 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-
 const MissileDetailsGame = () => {
   const chosenMissile = useSelector((state) => state.chosenMissile.chosenMissile);
 
@@ -8,8 +5,7 @@ const MissileDetailsGame = () => {
     const isCloseEnough = (lat1, lng1, lat2, lng2, tolerance = 0.5) => {
       return Math.abs(lat1 - lat2) < tolerance && Math.abs(lng1 - lng2) < tolerance;
     };
-  
-    // Define all possible locations
+
     const locations = [
       { lat: 32.0, lng: 33.0, name: "הים התיכון" },
       { lat: 32.0853, lng: 34.7818, name: "תל אביב" },
@@ -26,11 +22,11 @@ const MissileDetailsGame = () => {
       { lat: 31.8928, lng: 34.8113, name: "רמלה" },
       { lat: 32.3275, lng: 34.8519, name: "קיסריה" }
     ];
-  
+
     const foundLocation = locations.find(loc => 
       isCloseEnough(position.lat, position.lng, loc.lat, loc.lng)
     );
-  
+
     return foundLocation ? foundLocation.name : "מיקום לא ידוע";
   };
 
@@ -55,10 +51,14 @@ const MissileDetailsGame = () => {
           <DetailItem icon="⚡" label="מהירות" value={chosenMissile.speed} />
           <DetailItem icon="📡" label="סוג" value={chosenMissile.classification} />
           
-          {/* Conditional message for "טיל אדום" classification */}
-          {chosenMissile.classification === "טיל אדום" && (
+          {chosenMissile.classification === "city" && (
             <p className="text-red-600 text-sm mt-2 font-bold text-center">
-              מטרה שצריך לשגר
+              מטרה נופלת בשטח עירוני צריך ליירט
+            </p>
+          )}
+          {chosenMissile.classification === "open space" && (
+            <p className="text-green-600 text-sm mt-2 font-bold text-center">
+              מטרה נופלת בשטח פתוח לא צריך ליירט
             </p>
           )}
         </div>

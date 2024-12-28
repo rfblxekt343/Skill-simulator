@@ -21,7 +21,7 @@ const geistMono = localFont({
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="bg-green-100">
+      <body suppressHydrationWarning={true} className="bg-green-100">
         <Provider store={store}>{children}</Provider>
       </body>
     </html>
