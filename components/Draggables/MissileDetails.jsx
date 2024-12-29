@@ -4,6 +4,8 @@ import { decrementActualStock } from '../../store/missileStockSlice';
 import { setInterceptionMode, addInterceptedMissile } from '../../store/interceptionSlice';
 import DraggableScreen from '../Tests/DraggableScreen';
 
+
+
 const MissileDetails = () => {
   const dispatch = useDispatch();
   const isInterceptionMode = useSelector((state) => state.interception.isInterceptionMode);
@@ -19,23 +21,10 @@ const MissileDetails = () => {
     if (position.lat === 33.8547 && position.lng === 35.8623) return "לבנון";
     if (position.lat === 31.7683 && position.lng === 35.2137) return "ירושלים";
     if (position.lat === 31.5 && position.lng === 34.45) return "עזה";
-    return "מיקום לא ידוע";
+    return "שטח פתוח";
   };
 
-  const calculateDistance = (point1, point2) => {
-    const R = 6371; // Earth's radius in km
-    const lat1 = point1.lat * Math.PI / 180;
-    const lat2 = point2.lat * Math.PI / 180;
-    const dLat = (point2.lat - point1.lat) * Math.PI / 180;
-    const dLon = (point2.lng - point1.lng) * Math.PI / 180;
-
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(lat1) * Math.cos(lat2) *
-              Math.sin(dLon/2) * Math.sin(dLon/2);
-    
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c; // Distance in km
-  };
+  
 
   useEffect(() => {
     if (chosenMissile) {
@@ -47,7 +36,6 @@ const MissileDetails = () => {
   useEffect(() => {
     if (!chosenMissile) return;
     
-    // Ensure speed is a valid number
     const speed = parseFloat(chosenMissile.speed.replace(/[^0-9.]/g, ''));
     
     if (isNaN(speed)) {
@@ -55,34 +43,29 @@ const MissileDetails = () => {
       return;
     }
 
-    // Calculate total flight time based on the animation duration
-    const totalFlightTime = Math.floor((70000 * (10 / speed)) / 1000); // Convert to seconds
-    const startTime = Date.now();
+      // Calculate total flight time
+      const totalFlightTime = Math.floor((200000 * (10 / speed)) / 1000); // in seconds
     
-    console.log('Debug info:', {
-      speed,
-      totalFlightTime,
-      startTime,
-      chosenMissile
-    });
-
-    const timer = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - startTime) / 1000);
-      const remaining = Math.max(0, totalFlightTime - elapsed);
-      
-      setTimeLeft(remaining);
-      
-      if (remaining <= 0) {
-        setCanIntercept(false);
+      const timer = setInterval(() => {
+        const elapsedSinceStart = Math.floor((Date.now() - chosenMissile.startTime) / 1000);
+        const remaining = Math.max(0, totalFlightTime - elapsedSinceStart);
+        
+        setTimeLeft(remaining);
+        
+        if (remaining <= 0) {
+          setCanIntercept(false);
+          clearInterval(timer);
+        }
+      }, 1000);
+  
+      // Set initial interception state based on current time
+      const initialElapsed = Math.floor((Date.now() - chosenMissile.startTime) / 1000);
+      setCanIntercept(initialElapsed < totalFlightTime);
+  
+      return () => {
         clearInterval(timer);
-      }
-    }, 1000);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, [chosenMissile]);
-
+      };
+    }, [chosenMissile]);
   const handleInterception = () => {
     if (chosenMissile && canIntercept) {
       dispatch(setInterceptionMode(!isInterceptionMode));
@@ -112,7 +95,7 @@ const MissileDetails = () => {
             <DetailItem
               icon="⚡"
               label="מהירות"
-              value={chosenMissile.speed ? `${chosenMissile.speed} קמ"ש` : 'לא ידוע'}
+              value={chosenMissile.speed ? `${chosenMissile.speed}` : 'לא ידוע'}
             />
             {timeLeft !== null && (
               <DetailItem

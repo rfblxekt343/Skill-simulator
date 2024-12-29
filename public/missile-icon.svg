@@ -1,30 +1,46 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <defs>
-    <linearGradient id="bodyGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#555;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#999;stop-opacity:1" />
+    <!-- More realistic metallic gradients -->
+    <linearGradient id="metalBody" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#2c3e50;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#95a5a6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2c3e50;stop-opacity:1" />
     </linearGradient>
-    <radialGradient id="noseGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-      <stop offset="0%" style="stop-color:#777;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#444;stop-opacity:1" />
-    </radialGradient>
+    <linearGradient id="warhead" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#34495e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7f8c8d;stop-opacity:1" />
+    </linearGradient>
+    <!-- Reflection effect -->
+    <linearGradient id="reflection" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:rgba(255,255,255,0.4)" />
+      <stop offset="100%" style="stop-color:rgba(255,255,255,0)" />
+    </linearGradient>
   </defs>
   
-  <!-- Missile body with stroke and shadow effect -->
-  <path d="M20 50 L80 50 L75 90 L25 90 Z" fill="url(#bodyGradient)" stroke="#2c3e50" stroke-width="2"/>
-
-  <!-- Highlights for the body -->
-  <path d="M20 50 L50 20 L80 50 L75 90 L25 90 L20 50 Z" fill="rgba(255, 255, 255, 0.2)" />
-
-  <!-- Missile nose with shadow effect -->
-  <path d="M30 50 Q50 10 70 50 Z" fill="url(#noseGradient)" stroke="#8e44ad" stroke-width="2"/>
+  <!-- Main body -->
+  <path d="M25 35 L75 35 L72 85 L28 85 Z" fill="url(#metalBody)" stroke="#2c3e50" stroke-width="1"/>
   
-  <!-- Fins -->
-  <path d="M25 90 L15 100 L25 95 Z" fill="#666" />
-  <path d="M75 90 L85 100 L75 95 Z" fill="#666" />
+  <!-- Warhead -->
+  <path d="M35 35 Q50 15 65 35" fill="url(#warhead)" stroke="#2c3e50" stroke-width="1"/>
   
-  <!-- Thrust -->
-  <path d="M30 90 L50 110 L70 90 Z" fill="#ff6600" opacity="0.8">
-    <animate attributeName="opacity" values="0.8;0.4;0.8" dur="0.5s" repeatCount="indefinite" />
-  </path>
+  <!-- Guidance fins -->
+  <path d="M28 85 L15 95 L28 90 Z" fill="#34495e" stroke="#2c3e50" stroke-width="0.5"/>
+  <path d="M72 85 L85 95 L72 90 Z" fill="#34495e" stroke="#2c3e50" stroke-width="0.5"/>
+  
+  <!-- Stabilizer fins -->
+  <path d="M45 85 L40 95 L45 90 Z" fill="#34495e" stroke="#2c3e50" stroke-width="0.5"/>
+  <path d="M55 85 L60 95 L55 90 Z" fill="#34495e" stroke="#2c3e50" stroke-width="0.5"/>
+  
+  <!-- Reflection highlight -->
+  <path d="M30 35 L70 35 L68 80 L32 80 Z" fill="url(#reflection)" opacity="0.3"/>
+  
+  <!-- Exhaust -->
+  <g>
+    <path d="M35 85 L50 100 L65 85" fill="#e74c3c" opacity="0.8">
+      <animate attributeName="opacity" values="0.8;0.4;0.8" dur="0.3s" repeatCount="indefinite"/>
+    </path>
+    <path d="M40 85 L50 95 L60 85" fill="#c0392b" opacity="0.9">
+      <animate attributeName="opacity" values="0.9;0.5;0.9" dur="0.2s" repeatCount="indefinite"/>
+    </path>
+  </g>
 </svg>

@@ -7,6 +7,8 @@ import { setChosenMissile } from '../store/chosenMissileSlice';
 import { addInterceptedMissile } from '../store/interceptionSlice';
 import { setInterceptionMode } from '../store/interceptionSlice';
 
+
+
 const LOCATIONS = {
   israelCenter: { lat: 31.7683, lng: 35.2137 },
   telAviv: { lat: 32.0853, lng: 34.7818 },
@@ -14,6 +16,7 @@ const LOCATIONS = {
   sea: { lat: 32.0, lng: 33.0 },
   jordan: { lat: 32.0667, lng: 35.9333 },
   lebanon: { lat: 33.8547, lng: 35.8623 },
+
   jerusalem: { lat: 31.7683, lng: 35.2137 },
   gaza: { lat: 31.5, lng: 34.45 }
 };
@@ -36,10 +39,11 @@ const MISSILE_TARGETS = [
 
 
 const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay = 0, missileId, speed, classification }) => {
+ 
   const dispatch = useDispatch();
   const isInterceptionMode = useSelector((state) => state.interception.isInterceptionMode);
   const chosenMissile = useSelector((state) => state.chosenMissile.chosenMissile);
-  
+
   const pathRef = useRef(null);
   const missileRef = useRef(null);
   const interceptorRef = useRef(null);
@@ -50,34 +54,73 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
   const currentPositionRef = useRef(startPosition);
   const animationFrameRef = useRef(null);
 
+
+  const calculateBearing = (start, end) => {
+    const startLat = start.lat * Math.PI / 180;
+    const startLng = start.lng * Math.PI / 180;
+    const endLat = end.lat * Math.PI / 180;
+    const endLng = end.lng * Math.PI / 180;
+
+    const dLng = endLng - startLng;
+
+    const y = Math.sin(dLng) * Math.cos(endLat);
+    const x = Math.cos(startLat) * Math.sin(endLat) -
+              Math.sin(startLat) * Math.cos(endLat) * Math.cos(dLng);
+
+    let bearing = Math.atan2(y, x) * 180 / Math.PI;
+    bearing = (bearing + 360) % 360; // Normalize to 0-360
+    return bearing;
+  };
+
+
   // Create missile icons for selected and unselected states
-  const createMissileIcon = (isSelected) => {
+  const createMissileIcon = (isSelected, bearing) => {
     return L.divIcon({
       html: `<div style="
-        width: 32px;
-        height: 32px;
+        width: 24px;
+        height: 24px;
         display: flex;
         align-items: center;
         justify-content: center;
+        ${isSelected ? 'background-color: rgba(239, 68, 68, 0.2);' : ''}
         border-radius: 50%;
         border: ${isSelected ? '2px solid #ef4444' : 'none'};
-        padding: 2px;
+        transform: rotate(${bearing}deg);
       ">
-        <img src="/missile-icon.svg" style="width: 100%; height: 100%;" />
+        <img 
+          src="/missile-icon.svg" 
+          style="
+            width: 100%; 
+            height: 100%;
+            transform-origin: center;
+          "
+        />
       </div>`,
       className: '',
-      iconSize: [32, 32],
-      iconAnchor: [16, 16],
+      iconSize: [24, 24],
+      iconAnchor: [12, 12],
     });
   };
 
   useEffect(() => {
+  if (missileRef.current) {
+    const isSelected = chosenMissile?.id === missileId;
+
+    // Recalculate bearing for the current position
+    const bearing = calculateBearing(currentPositionRef.current, endPosition);
+
+    // Update the missile icon with the selection state and bearing
+    missileRef.current.setIcon(createMissileIcon(isSelected, bearing));
+  }
+}, [chosenMissile, missileId, endPosition]);
+
+
+  useEffect(() => {
     if (!mapInstance || !animate || !isActive) return;
 
-    // const color = {
-    //   'city': '#ef4444',
-    //   'open space': '#10b981'
-    // }[classification] || '#f59e0b';
+    
+    const initialBearing = calculateBearing(startPosition, endPosition);
+  
 
     const path = L.polyline.antPath([startPosition, endPosition], {
       color: "green",
@@ -86,7 +129,7 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
     pathRef.current = path;
     path.addTo(mapInstance);
 
-    const missile = L.marker(startPosition, { icon: createMissileIcon(false) });
+    const missile = L.marker(startPosition, { icon: createMissileIcon(false,initialBearing) });
     missileRef.current = missile;
     missile.addTo(mapInstance);
 
@@ -97,11 +140,12 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
         endPosition,
         speed: `${speed} קמ"ש`,
         classification,
+        startTime: startTime
       }));
     });
 
     const startTime = Date.now();
-    const duration = 70000 * (10 / speed);
+    const duration = 200000 * (10 / speed);
 
     const animateMissile = () => {
       if (!isActive) return;
@@ -112,13 +156,23 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
       const lat = startPosition.lat + (endPosition.lat - startPosition.lat) * progress;
       const lng = startPosition.lng + (endPosition.lng - startPosition.lng) * progress;
 
+
+      // Calculate angle for missile rotation
+      const dx = endPosition.lng - startPosition.lng;
+      const dy = endPosition.lat - startPosition.lat;
+      const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
+
       const newPosition = { lat, lng };
       currentPositionRef.current = newPosition;
       missile.setLatLng(newPosition);
 
+       //const bearing = calculateBearing(startPosition, endPosition);
+      //missile.setIcon(createMissileIcon(chosenMissile?.id === missileId, bearing));
+
+
       if (progress < 1) {
         animationFrameRef.current = requestAnimationFrame(animateMissile);
-      }else{
+      } else {
         if (missileRef.current) {
           mapInstance.removeLayer(missileRef.current);
           missileRef.current = null; // Clear the reference
@@ -127,7 +181,7 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
           pathRef.current = null; // Clear the reference
         }
         setIsActive(false); // Mark the missile as inactive
-      
+
       }
     };
 
@@ -203,11 +257,10 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
-        setTimeout(() => {
-          if (explosionLayerRef.current) {
+        if (explosionLayerRef.current) {
             mapInstance.removeLayer(explosionLayerRef.current);
           }
-        }, 100);
+       
       }
     };
 
@@ -218,7 +271,7 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
     if (isInterceptionMode && chosenMissile?.id === missileId && isActive) {
       const interceptorStartPosition = mapInstance.getCenter();
       const missilePosition = currentPositionRef.current;
-      
+
       const interceptorIcon = L.icon({
         iconUrl: '/interception-missile-icon.svg',
         iconSize: [24, 24],
@@ -233,7 +286,7 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
       const startTime = Date.now();
       let interceptorFrame;
 
-      const timeFraction = interceptorDuration / (70000 * (10 / speed));
+      const timeFraction = interceptorDuration / (200000 * (10 / speed));
       const predictedMissilePosition = {
         lat: missilePosition.lat + (endPosition.lat - missilePosition.lat) * timeFraction,
         lng: missilePosition.lng + (endPosition.lng - missilePosition.lng) * timeFraction
@@ -255,7 +308,7 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
           createExplosion(predictedMissilePosition);
           setIsActive(false);
           dispatch(addInterceptedMissile(missileId));
-          
+
           setTimeout(() => {
             if (pathRef.current) mapInstance.removeLayer(pathRef.current);
             if (missileRef.current) mapInstance.removeLayer(missileRef.current);
@@ -279,10 +332,52 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
 };
 
 const Map = () => {
-  const [missiles, setMissiles] = useState([]);
+  const missileIdRef = useRef(0); // Initialize missileIdRef here, before useState
+  const [missiles, setMissiles] = useState([]); // Start with an empty array for missiles
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
-  const missileIdRef = useRef(0);
+  const [mapDimensions, setMapDimensions] = useState({ width: '100%', height: '75vh' });
+
+  const updateMapDimensions = useCallback(() => {
+    // Get viewport dimensions
+    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+
+    // Calculate dimensions based on screen size
+    let width = '100%';
+    let height = '75vh';
+
+    // Mobile (portrait)
+    if (vw < 768) {
+      height = '60vh';
+    }
+    // Mobile (landscape)
+    else if (vh < 500) {
+      height = '85vh';
+    }
+    // Tablet
+    else if (vw < 1024) {
+      height = '70vh';
+    }
+    // Desktop
+    else {
+      height = '75vh';
+    }
+
+    setMapDimensions({ width, height });
+  }, []);
+
+  useEffect(() => {
+    // Initial update
+    updateMapDimensions();
+
+    // Add resize listener
+    window.addEventListener('resize', updateMapDimensions);
+
+    return () => {
+      window.removeEventListener('resize', updateMapDimensions);
+    };
+  }, [updateMapDimensions]);
 
   const generateMissileSource = useCallback(() => {
     const sources = [LOCATIONS.lebanon, LOCATIONS.jordan, LOCATIONS.sea, LOCATIONS.gaza];
@@ -316,8 +411,9 @@ const Map = () => {
   }, []);
 
   useEffect(() => {
-    let missileCount = 0;
+    let missileCount = 1; // Start at 1 since initial missile is already added
     const maxMissiles = 8;
+
 
     const interval = setInterval(() => {
       if (missileCount >= maxMissiles) {
@@ -332,20 +428,28 @@ const Map = () => {
           startPosition: generateMissileSource(),
           endPosition: target,
           speed: Math.round(Math.random() * (50 - 40) + 40),
-          classification: target.type
+          classification: target.type,
+          startTime: Date.now()
         }];
       });
 
       missileCount++;
-    }, 2000);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [generateMissileSource]);
 
   return (
     <div className="flex flex-col items-center p-4 min-h-screen">
-      <div className="w-full h-[75vh] md:w-[90vw] lg:w-[85vw] max-w-screen-xl mt-12">
-        <div ref={mapRef} className="h-full w-full rounded-lg shadow-lg" />
+      <div 
+        className="w-full max-w-screen-xl mt-4 md:mt-8 lg:mt-12"
+        style={{ width: mapDimensions.width }}
+      >
+        <div 
+          ref={mapRef} 
+          className="rounded-lg shadow-lg"
+          style={{ height: mapDimensions.height }}
+        />
         {mapInstanceRef.current && missiles.map(missile => (
           <MissilePath
             key={missile.id}
@@ -364,3 +468,7 @@ const Map = () => {
 };
 
 export default Map;
+
+
+
+
