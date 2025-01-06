@@ -4,8 +4,6 @@ import { decrementActualStock } from '../../store/missileStockSlice';
 import { setInterceptionMode, addInterceptedMissile } from '../../store/interceptionSlice';
 import DraggableScreen from '../Tests/DraggableScreen';
 
-
-
 const MissileDetails = () => {
   const dispatch = useDispatch();
   const isInterceptionMode = useSelector((state) => state.interception.isInterceptionMode);
@@ -24,12 +22,10 @@ const MissileDetails = () => {
     return "שטח פתוח";
   };
 
-  
-
   useEffect(() => {
     if (chosenMissile) {
-      setCanIntercept(true); // Reset interception state for new missile
-      setTimeLeft(null); // Reset timer
+      setCanIntercept(true);
+      setTimeLeft(null);
     }
   }, [chosenMissile?.id]);
 
@@ -43,34 +39,39 @@ const MissileDetails = () => {
       return;
     }
 
-      // Calculate total flight time
-      const totalFlightTime = Math.floor((200000 * (10 / speed)) / 1000); // in seconds
+    const totalFlightTime = Math.floor((200000 * (10 / speed)) / 1000);
     
-      const timer = setInterval(() => {
-        const elapsedSinceStart = Math.floor((Date.now() - chosenMissile.startTime) / 1000);
-        const remaining = Math.max(0, totalFlightTime - elapsedSinceStart);
-        
-        setTimeLeft(remaining);
-        
-        if (remaining <= 0) {
-          setCanIntercept(false);
-          clearInterval(timer);
-        }
-      }, 1000);
-  
-      // Set initial interception state based on current time
-      const initialElapsed = Math.floor((Date.now() - chosenMissile.startTime) / 1000);
-      setCanIntercept(initialElapsed < totalFlightTime);
-  
-      return () => {
+    const timer = setInterval(() => {
+      const elapsedSinceStart = Math.floor((Date.now() - chosenMissile.startTime) / 1000);
+      const remaining = Math.max(0, totalFlightTime - elapsedSinceStart);
+      
+      setTimeLeft(remaining);
+      
+      if (remaining <= 0) {
+        setCanIntercept(false);
         clearInterval(timer);
-      };
-    }, [chosenMissile]);
-  const handleInterception = () => {
+      }
+    }, 1000);
+
+    const initialElapsed = Math.floor((Date.now() - chosenMissile.startTime) / 1000);
+    setCanIntercept(initialElapsed < totalFlightTime);
+
+    return () => clearInterval(timer);
+  }, [chosenMissile]);
+
+  const handleInterception = (e) => {
+    // Prevent any default behavior and stop event propagation
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Check if we can intercept and have a chosen missile
     if (chosenMissile && canIntercept) {
-      dispatch(setInterceptionMode(!isInterceptionMode));
-      dispatch(addInterceptedMissile(chosenMissile.id));
-      dispatch(decrementActualStock());
+      // Add a small delay to ensure UI updates properly
+      setTimeout(() => {
+        dispatch(setInterceptionMode(true));
+        dispatch(addInterceptedMissile(chosenMissile.id));
+        dispatch(decrementActualStock());
+      }, 10);
     }
   };
 
@@ -110,7 +111,7 @@ const MissileDetails = () => {
                 מטרה נופלת בשטח עירוני צריך ליירט
               </p>
             )}
-            {chosenMissile.classification === "open space" && (
+            {chosenMissile.classification === "open" && (
               <p className="text-green-600 text-sm mt-2 font-bold text-center">
                 מטרה נופלת בשטח פתוח לא צריך ליירט
               </p>
@@ -119,10 +120,11 @@ const MissileDetails = () => {
             <div className="mt-3 pt-2 border-t border-gray-200">
               <button
                 onClick={handleInterception}
+                onTouchEnd={handleInterception}
                 disabled={!canIntercept}
                 className={`w-full font-bold py-2 px-4 rounded transition-colors duration-200 ${
                   canIntercept 
-                    ? 'bg-red-500 hover:bg-red-600 text-white'
+                    ? 'bg-red-500 hover:bg-red-600 text-white active:bg-red-700'
                     : 'bg-gray-400 text-gray-200 cursor-not-allowed'
                 }`}
               >

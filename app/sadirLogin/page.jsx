@@ -21,7 +21,7 @@ const InstructionsPage = () => {
         <div className="text-center relative">
           <div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto mb-6 rounded-full" />
           <h1 className="text-4xl font-bold text-blue-700 mb-4">סימולטור מיומנות</h1>
-          <p className="text-lg text-gray-600">מכין את המשתמש להיות לזמן המאמן, ומתמקד שמיומנויות הנדרשות בו!</p>
+          <p className="text-lg text-gray-600">מכין את המשתמש להיות לזמן המאמן, ומתמקד במיומנויות הנדרשות בו!</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
