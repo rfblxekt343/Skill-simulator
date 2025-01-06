@@ -2,7 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    chosenMissile: null,    
+  chosenMissile: null,
 }
 const chosenMissileSlice = createSlice({
   name: 'chosenMissile',
@@ -14,8 +14,12 @@ const chosenMissileSlice = createSlice({
     clearChosenMissile: (state) => {
       state.chosenMissile = null;  // Clear the selection
     },
+    resetAllChosen: (state) => {
+      // This will reset all values to initial state
+      return initialState;
+    }
   },
 });
 
-export const { setChosenMissile, clearChosenMissile } = chosenMissileSlice.actions;
+export const { setChosenMissile, clearChosenMissile,resetAllChosen } = chosenMissileSlice.actions;
 export default chosenMissileSlice.reducer;

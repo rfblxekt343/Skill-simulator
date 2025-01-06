@@ -22,12 +22,6 @@ const MissileStock = () => {
   const stockUI = useSelector((state) => state.missileStock.stockUI);
   const actualStock = useSelector((state) => state.missileStock.actualStock);
 
-  useEffect(() => {
-    if (stockUI === actualStock) {
-      console.log('good job');
-    }
-  }, [stockUI, actualStock]);
-
   const handleIncrement = useCallback(() => {
     dispatch(incrementStockUI());
   }, [dispatch]);

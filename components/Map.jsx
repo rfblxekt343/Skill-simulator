@@ -6,8 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setChosenMissile } from '../store/chosenMissileSlice';
 import { addInterceptedMissile } from '../store/interceptionSlice';
 import { setInterceptionMode } from '../store/interceptionSlice';
-
-
+import { InterceptedCity,IncreaseActive,DecreaseActive,SetIsStarted} from '../store/howManyInterceptedSlice';
 
 const LOCATIONS = {
   israelCenter: { lat: 31.7683, lng: 35.2137 },
@@ -16,7 +15,6 @@ const LOCATIONS = {
   sea: { lat: 32.0, lng: 33.0 },
   jordan: { lat: 32.0667, lng: 35.9333 },
   lebanon: { lat: 33.8547, lng: 35.8623 },
-
   jerusalem: { lat: 31.7683, lng: 35.2137 },
   gaza: { lat: 31.5, lng: 34.45 }
 };
@@ -24,23 +22,20 @@ const LOCATIONS = {
 const MISSILE_TARGETS = [
   // Cities
   { lat: 32.0853, lng: 34.7818, type: 'city' }, // Tel Aviv
-  { lat: 31.7683, lng: 35.2137, type: 'city' }, // Jerusalem
-  { lat: 32.7940, lng: 34.9896, type: 'city' }, // Haifa
-  { lat: 31.8162, lng: 34.9512, type: 'city' }, // Beit Shemesh
-  { lat: 31.2516, lng: 34.7915, type: 'city' }, // Beer Sheva
-  
-  // Open spaces
   { lat: 31.0461, lng: 34.8516, type: 'open' },
+  { lat: 31.7683, lng: 35.2137, type: 'city' }, // Jerusalem
   { lat: 31.8928, lng: 34.8113, type: 'open' },
+  { lat: 32.7940, lng: 34.9896, type: 'city' }, // Haifa
   { lat: 32.3275, lng: 34.8519, type: 'open' },
+  { lat: 31.8162, lng: 34.9512, type: 'city' }, // Beit Shemesh
   { lat: 31.5234, lng: 34.9124, type: 'open' },
+  { lat: 31.2516, lng: 34.7915, type: 'city' }, // Beer Sheva
   { lat: 32.1234, lng: 34.9876, type: 'open' }
 ];
 
 
-const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay = 0, missileId, speed, classification }) => {
- 
-  const dispatch = useDispatch();
+const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay = 0, missileId, speed, classification}) => {
+   const dispatch = useDispatch();
   const isInterceptionMode = useSelector((state) => state.interception.isInterceptionMode);
   const chosenMissile = useSelector((state) => state.chosenMissile.chosenMissile);
 
@@ -49,10 +44,12 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
   const interceptorRef = useRef(null);
   const explosionMarkerRef = useRef(null);
   const explosionLayerRef = useRef(null);
-  const [isActive, setIsActive] = useState(true);
   //const explosionSoundRef = useRef(new Audio('/sounds/Explosion.mp3'));
   const currentPositionRef = useRef(startPosition);
   const animationFrameRef = useRef(null);
+  
+
+
 
 
   const calculateBearing = (start, end) => {
@@ -65,7 +62,7 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
 
     const y = Math.sin(dLng) * Math.cos(endLat);
     const x = Math.cos(startLat) * Math.sin(endLat) -
-              Math.sin(startLat) * Math.cos(endLat) * Math.cos(dLng);
+      Math.sin(startLat) * Math.cos(endLat) * Math.cos(dLng);
 
     let bearing = Math.atan2(y, x) * 180 / Math.PI;
     bearing = (bearing + 360) % 360; // Normalize to 0-360
@@ -103,24 +100,24 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
   };
 
   useEffect(() => {
-  if (missileRef.current) {
-    const isSelected = chosenMissile?.id === missileId;
+    if (missileRef.current) {
+      const isSelected = chosenMissile?.id === missileId;
 
-    // Recalculate bearing for the current position
-    const bearing = calculateBearing(currentPositionRef.current, endPosition);
+      // Recalculate bearing for the current position
+      const bearing = calculateBearing(currentPositionRef.current, endPosition);
 
-    // Update the missile icon with the selection state and bearing
-    missileRef.current.setIcon(createMissileIcon(isSelected, bearing));
-  }
-}, [chosenMissile, missileId, endPosition]);
+      // Update the missile icon with the selection state and bearing
+      missileRef.current.setIcon(createMissileIcon(isSelected, bearing));
+    }
+  }, [chosenMissile, missileId, endPosition]);
 
 
   useEffect(() => {
-    if (!mapInstance || !animate || !isActive) return;
+    if (!mapInstance || !animate) return;
 
-    
+
     const initialBearing = calculateBearing(startPosition, endPosition);
-  
+
 
     const path = L.polyline.antPath([startPosition, endPosition], {
       color: "green",
@@ -129,7 +126,7 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
     pathRef.current = path;
     path.addTo(mapInstance);
 
-    const missile = L.marker(startPosition, { icon: createMissileIcon(false,initialBearing) });
+    const missile = L.marker(startPosition, { icon: createMissileIcon(false, initialBearing) });
     missileRef.current = missile;
     missile.addTo(mapInstance);
 
@@ -148,7 +145,7 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
     const duration = 200000 * (10 / speed);
 
     const animateMissile = () => {
-      if (!isActive) return;
+     
 
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
@@ -166,7 +163,7 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
       currentPositionRef.current = newPosition;
       missile.setLatLng(newPosition);
 
-       //const bearing = calculateBearing(startPosition, endPosition);
+      //const bearing = calculateBearing(startPosition, endPosition);
       //missile.setIcon(createMissileIcon(chosenMissile?.id === missileId, bearing));
 
 
@@ -180,7 +177,7 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
           mapInstance.removeLayer(pathRef.current);
           pathRef.current = null; // Clear the reference
         }
-        setIsActive(false); // Mark the missile as inactive
+        dispatch(DecreaseActive());
 
       }
     };
@@ -200,7 +197,7 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
       if (explosionMarkerRef.current) mapInstance.removeLayer(explosionMarkerRef.current);
       if (explosionLayerRef.current) mapInstance.removeLayer(explosionLayerRef.current);
     };
-  }, [mapInstance, animate, startPosition, endPosition, delay, speed, classification, dispatch, isActive]);
+  }, [mapInstance, animate, startPosition, endPosition, delay, speed, classification, dispatch, ]);
 
   // Update missile icon when selection changes
   useEffect(() => {
@@ -258,9 +255,12 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
         requestAnimationFrame(animate);
       } else {
         if (explosionLayerRef.current) {
-            mapInstance.removeLayer(explosionLayerRef.current);
+          if(chosenMissile.endPosition.type === 'city'){
+            dispatch(InterceptedCity())
           }
-       
+          mapInstance.removeLayer(explosionLayerRef.current);
+        }
+
       }
     };
 
@@ -268,7 +268,7 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
   };
 
   useEffect(() => {
-    if (isInterceptionMode && chosenMissile?.id === missileId && isActive) {
+    if (isInterceptionMode && chosenMissile?.id === missileId ) {
       const interceptorStartPosition = mapInstance.getCenter();
       const missilePosition = currentPositionRef.current;
 
@@ -306,7 +306,7 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
         } else {
           //explosionSoundRef.current.play();
           createExplosion(predictedMissilePosition);
-          setIsActive(false);
+
           dispatch(addInterceptedMissile(missileId));
 
           setTimeout(() => {
@@ -326,18 +326,23 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
         }
       };
     }
-  }, [isInterceptionMode, chosenMissile, missileId, mapInstance, dispatch, isActive, startPosition, endPosition, speed]);
+  }, [isInterceptionMode, chosenMissile, missileId, mapInstance, dispatch, startPosition, endPosition, speed]);
 
   return null;
 };
 
 const Map = () => {
+  const dispatch = useDispatch();
   const missileIdRef = useRef(0); // Initialize missileIdRef here, before useState
   const [missiles, setMissiles] = useState([]); // Start with an empty array for missiles
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const [mapDimensions, setMapDimensions] = useState({ width: '100%', height: '75vh' });
+  //const activeMissilesCount = useSelector((state) => state.howManyIntercepted.activeMissilesCount);
 
+
+ 
+  
   const updateMapDimensions = useCallback(() => {
     // Get viewport dimensions
     const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
@@ -411,18 +416,28 @@ const Map = () => {
   }, []);
 
   useEffect(() => {
-    let missileCount = 1; // Start at 1 since initial missile is already added
-    const maxMissiles = 8;
+    let missileCount = 0; 
+    const maxMissiles =9;//9
+    setMissiles([{
+      id: `missile-${missileIdRef.current++}`,
+      startPosition: generateMissileSource(),
+      endPosition: MISSILE_TARGETS[0], // Start with first target
+      speed: Math.round(Math.random() * (50 - 40) + 40),
+      classification: MISSILE_TARGETS[0].type,
+      startTime: Date.now()
+    }]);
 
 
     const interval = setInterval(() => {
+      missileCount++;
+      dispatch(IncreaseActive());
       if (missileCount >= maxMissiles) {
         clearInterval(interval);
         return;
       }
 
       setMissiles(prev => {
-        const target = MISSILE_TARGETS[Math.floor(Math.random() * MISSILE_TARGETS.length)];
+        const target = MISSILE_TARGETS[missileCount];
         return [...prev, {
           id: `missile-${missileIdRef.current++}`,
           startPosition: generateMissileSource(),
@@ -432,21 +447,22 @@ const Map = () => {
           startTime: Date.now()
         }];
       });
-
-      missileCount++;
-    }, 3000);
+      dispatch(SetIsStarted(true));
+    }, 4000);
 
     return () => clearInterval(interval);
   }, [generateMissileSource]);
 
+
+
   return (
     <div className="flex flex-col items-center p-4 min-h-screen">
-      <div 
+      <div
         className="w-full max-w-screen-xl mt-4 md:mt-8 lg:mt-12"
         style={{ width: mapDimensions.width }}
       >
-        <div 
-          ref={mapRef} 
+        <div
+          ref={mapRef}
           className="rounded-lg shadow-lg"
           style={{ height: mapDimensions.height }}
         />
@@ -460,9 +476,12 @@ const Map = () => {
             animate={true}
             speed={missile.speed}
             classification={missile.classification}
+           
           />
+        
         ))}
       </div>
+
     </div>
   );
 };

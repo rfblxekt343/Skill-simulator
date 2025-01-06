@@ -3,7 +3,7 @@ import TimeManagement from "../components/Tests/TimeManagement"; // Uncomment if
 import HandlingPressureTest from "../components/Tests/HandlingPressure"; // Uncomment if needed
 import InterceptorManagementTest from "../components/Tests/InterceptorManagement"; // Uncomment if needed
 import Map from "../components/Map"; // Uncomment if needed
-import SimulatorPage from "./sadirLogin/page"; // Uncomment if needed
+import SimulatorPage from "./sadirLogin/simulator/page"; // Uncomment if needed
 
 import { metadata } from './metadata'; // Importing metadata
 
