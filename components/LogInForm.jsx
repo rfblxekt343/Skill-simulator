@@ -128,6 +128,7 @@ export default function LogInForm() {
                     </div>
                     <span className="text-lg text-blue-50 group-hover:text-blue-200 transition-colors">
                       מלש&quot;ב
+                      (סימולטור מיומנות)
                     </span>
                   </div>
                 </label>
@@ -156,6 +157,7 @@ export default function LogInForm() {
                     </div>
                     <span className="text-lg text-blue-50 group-hover:text-blue-200 transition-colors">
                       סדיר
+                      (משחק יירוט)
                     </span>
                   </div>
                 </label>
