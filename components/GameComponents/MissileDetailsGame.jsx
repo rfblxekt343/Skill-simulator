@@ -1,3 +1,6 @@
+import { useSelector } from "react-redux";
+
+
 const MissileDetailsGame = () => {
   const chosenMissile = useSelector((state) => state.chosenMissile.chosenMissile);
 
