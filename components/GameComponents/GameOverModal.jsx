@@ -15,7 +15,7 @@ const calculateScore = (intercepted, missed, totalMissiles) => {
 };
 
 const GameOverModal = ({ isVisible }) => {
-  const TOTAL_MISSILES = 25; // Total missiles in the game
+  const TOTAL_MISSILES = 10; // Total missiles in the game
   const stock = useSelector((state) => state.missileStockGame.stock);
   const intercepted = useSelector((state) => state.missileStockGame.intercepted);
   const missed = useSelector((state) => state.missileStockGame.missed);

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const TOTAL_MISSILES = 25;
+const TOTAL_MISSILES = 10;
 
 const initialState = {
   stock: TOTAL_MISSILES,  // Starting stock of interceptor missiles

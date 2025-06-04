@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 
 const Timer = ({onTimerEnd}) => {
-  const [timeLeft, setTimeLeft] = useState(90); // 1.5 minutes in seconds
+  const [timeLeft, setTimeLeft] = useState(45); // 45 seconds
 
   useEffect(() => {
     if (timeLeft <= 0){

@@ -1,5 +1,4 @@
-
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, memo } from 'react';
 import 'leaflet/dist/leaflet.css';
 import "leaflet-ant-path";
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,7 +7,7 @@ import { addInterceptedMissile } from '../../store/game/interceptionGameSlice';
 import { interceptMissile, missMissile } from '../../store/game/missileStockGameSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Constants
+// Constants (same as before)
 const israelCenter = { lat: 31.7683, lng: 35.2137 };
 const position = { lat: 31.0461, lng: 34.8516 };
 const jordanPosition = { lat: 32.0667, lng: 35.9333 };
@@ -29,8 +28,8 @@ const missileTargets = [
   { lat: 32.3275, lng: 34.8519 }, // Caesarea
 ];
 
-// MissilePath Component
-const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay = 0, missileId, speed, classification }) => {
+// Memoized MissilePath Component
+const MissilePath = memo(({ mapInstance, startPosition, endPosition, animate, delay = 0, missileId, speed, classification }) => {
   const dispatch = useDispatch();
   const isInterceptionMode = useSelector((state) => state.interceptionGame.isInterceptionMode);
   const pathRef = useRef(null);
@@ -47,8 +46,8 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
 
     if (animate) {
       timeoutId = setTimeout(() => {
-        const color = classification === "טיל אדום" ? "#ef4444" : 
-                     classification === "טיל ירוק" ? "#10b981" : "#f59e0b";
+        const color = classification === "טיל אדום" ? "#ef4444" :
+          classification === "טיל ירוק" ? "#10b981" : "#f59e0b";
 
         const path = L.polyline.antPath([startPosition, endPosition], {
           color,
@@ -168,25 +167,22 @@ const MissilePath = ({ mapInstance, startPosition, endPosition, animate, delay =
   }, [animate, mapInstance, startPosition, endPosition, delay, speed, classification, dispatch, isInterceptionMode, missileId]);
 
   return null;
-};
+});
 
-// Main Map Component
-const Map = () => {
+// Memoized Main Map Component
+const Map = memo(() => {
+  console.log("Map component rendering");
+  
   const [missiles, setMissiles] = useState([]);
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
 
-  const generateMissileSource = useCallback(() => {
-    const sources = [lebanonPosition, jordanPosition, seaPosition, gazaPosition];
-    return sources[Math.floor(Math.random() * sources.length)];
-  }, []);
-
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    
+
     const L = require('leaflet');
     require('leaflet-ant-path');
-    
+
     delete L.Icon.Default.prototype._getIconUrl;
     L.Icon.Default.mergeOptions({
       iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-icon-2x.png',
@@ -210,28 +206,37 @@ const Map = () => {
   }, []);
 
   useEffect(() => {
+    console.log("Starting missile generation");
     let missileCount = 0;
-    const maxMissiles = 25;
+    const maxMissiles = 10;
     
+    const sources = [lebanonPosition, jordanPosition, seaPosition, gazaPosition];
+
     const interval = setInterval(() => {
       if (missileCount >= maxMissiles) {
         clearInterval(interval);
         return;
       }
 
+      const randomSource = sources[Math.floor(Math.random() * sources.length)];
+      
       setMissiles(prev => [...prev, {
-        id: `${missileCount}`,
-        startPosition: generateMissileSource(),
+        id: `${Date.now()}-${missileCount}`,
+        startPosition: randomSource,
         endPosition: missileTargets[Math.floor(Math.random() * missileTargets.length)],
         speed: Math.round(Math.random() * (50 - 40) + 40),
         classification: "טיל אדום"
       }]);
 
+      console.log(`Generated missile ${missileCount + 1}`);
       missileCount++;
-    }, 1000);
+    }, 2000);
 
-    return () => clearInterval(interval);
-  }, [generateMissileSource]);
+    return () => {
+      console.log("Cleaning up missile generation");
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col items-center p-4 min-h-screen">
@@ -252,6 +257,10 @@ const Map = () => {
       </div>
     </div>
   );
-};
+});
+
+// Add display names for debugging
+Map.displayName = 'Map';
+MissilePath.displayName = 'MissilePath';
 
 export default Map;

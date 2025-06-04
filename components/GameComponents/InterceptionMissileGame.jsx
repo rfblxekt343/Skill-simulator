@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
 import { setInterceptionMode } from '../../store/game/interceptionGameSlice';
 
+
+
 const InterceptionMissileGame = () => {
   const dispatch = useDispatch();
   const isInterceptionMode = useSelector((state) => state.interceptionGame.isInterceptionMode);
